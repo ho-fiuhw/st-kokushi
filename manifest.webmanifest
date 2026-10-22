@@ -1,0 +1,16 @@
+{
+  "name": "ST国試トレーナー",
+  "short_name": "ST国試",
+  "description": "言語聴覚士国家試験の過去問・予想問題を解いて学べる学習アプリ",
+  "lang": "ja",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#fff8f1",
+  "theme_color": "#ff7aa8",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}

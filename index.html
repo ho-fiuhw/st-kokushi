@@ -1,0 +1,982 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>ST国試トレーナー</title>
+<meta name="theme-color" content="#ff7aa8">
+<meta name="description" content="言語聴覚士国家試験の過去問・予想問題を解いて学べる学習アプリ">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="ST国試">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<style>
+/* =========================================================
+   見た目（色を変えたいときは :root の値だけ変えればOK）
+   ========================================================= */
+:root{
+  --bg:#fff8f1; --card:#ffffff; --ink:#4a3b45; --mute:#9a8a93; --line:#f1e3e8;
+  --pink:#ff7aa8; --pink-l:#ffe3ee; --mint:#3cc7a8; --mint-l:#dcf7ef;
+  --yellow:#ffc94d; --yellow-l:#fff3d1; --lav:#a98bff; --lav-l:#eee7ff;
+  --red:#ff6b6b; --red-l:#ffe5e5; --blue:#5aa9ff; --blue-l:#e2f0ff;
+  --r:18px; --sh:0 6px 0 rgba(74,59,69,.08), 0 10px 24px rgba(74,59,69,.08);
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);
+  font-family:"Hiragino Maru Gothic ProN","Rounded Mplus 1c","Hiragino Sans","Yu Gothic UI","Meiryo",sans-serif;
+  -webkit-text-size-adjust:100%}
+body{background-image:radial-gradient(var(--pink-l) 1.5px,transparent 1.5px),radial-gradient(var(--mint-l) 1.5px,transparent 1.5px);
+  background-size:28px 28px;background-position:0 0,14px 14px}
+button{font:inherit;color:inherit;cursor:pointer;border:none;background:none}
+input,select{font:inherit}
+header{position:sticky;top:0;z-index:30;padding-top:env(safe-area-inset-top);background:rgba(255,248,241,.92);backdrop-filter:blur(8px);border-bottom:2px dashed var(--line)}
+.hwrap{max-width:860px;margin:0 auto;display:flex;align-items:center;gap:8px;padding:10px 14px}
+.logo{font-weight:900;font-size:1.05rem;letter-spacing:.02em;white-space:nowrap}
+.logo b{color:var(--pink)}.logo i{font-style:normal;color:var(--mint)}
+nav{display:flex;gap:4px;margin-left:auto;overflow-x:auto}
+nav button{padding:7px 11px;border-radius:999px;font-weight:700;font-size:.85rem;white-space:nowrap}
+nav button.on{background:var(--pink);color:#fff;box-shadow:0 3px 0 #e05c8b}
+.iconbtn{width:36px;height:36px;border-radius:50%;background:var(--card);box-shadow:var(--sh);flex:none}
+main{max-width:860px;margin:0 auto;padding:16px 14px 170px}
+.card{background:var(--card);border-radius:var(--r);box-shadow:var(--sh);padding:18px;margin-bottom:16px;border:2px solid var(--line)}
+h2{font-size:1.15rem;margin:0 0 12px}h3{font-size:1rem;margin:16px 0 8px}
+.mute{color:var(--mute);font-size:.85rem}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:12px 18px;border-radius:14px;font-weight:800;
+  background:var(--pink);color:#fff;box-shadow:0 5px 0 #e05c8b;transition:transform .08s}
+.btn:active{transform:translateY(3px);box-shadow:0 2px 0 #e05c8b}
+.btn.mint{background:var(--mint);box-shadow:0 5px 0 #2aa58a}.btn.mint:active{box-shadow:0 2px 0 #2aa58a}
+.btn.lav{background:var(--lav);box-shadow:0 5px 0 #8a6be6}.btn.lav:active{box-shadow:0 2px 0 #8a6be6}
+.btn.ghost{background:var(--card);color:var(--ink);box-shadow:0 5px 0 var(--line);border:2px solid var(--line)}
+.btn.big{width:100%;padding:16px;font-size:1.05rem}
+.btn[disabled]{opacity:.45;pointer-events:none}
+.seg{display:flex;background:var(--pink-l);border-radius:14px;padding:4px;gap:4px}
+.seg button{flex:1;padding:9px 6px;border-radius:10px;font-weight:800;font-size:.9rem}
+.seg button.on{background:#fff;color:var(--pink);box-shadow:0 2px 0 rgba(0,0,0,.06)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{padding:6px 11px;border-radius:999px;border:2px solid var(--line);background:#fff;font-size:.82rem;font-weight:700}
+.chip.on{background:var(--mint-l);border-color:var(--mint);color:#1f8f76}
+.chip[disabled]{opacity:.35}
+.dom{border:2px solid var(--line);border-radius:14px;margin-bottom:8px;overflow:hidden}
+.dom summary{list-style:none;display:flex;align-items:center;gap:8px;padding:10px 12px;cursor:pointer;font-weight:800;font-size:.9rem}
+.dom summary::-webkit-details-marker{display:none}
+.dom .subs{padding:4px 12px 12px}
+.cb{width:22px;height:22px;border-radius:7px;border:2px solid var(--line);display:inline-grid;place-items:center;flex:none;background:#fff;font-size:.8rem}
+.cb.on{background:var(--mint);border-color:var(--mint);color:#fff}.cb.part{background:var(--mint-l);border-color:var(--mint)}
+.badge{display:inline-block;padding:2px 9px;border-radius:999px;font-size:.72rem;font-weight:800;background:var(--blue-l);color:#2f7fd6}
+.badge.ai{background:var(--lav-l);color:#7a5ae0}.badge.rv{background:var(--yellow-l);color:#b07a00}.badge.dm{background:var(--mint-l);color:#1f8f76}
+/* クイズ */
+.qtop{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.prog{flex:1;height:12px;background:#fff;border-radius:99px;border:2px solid var(--line);overflow:hidden}
+.prog i{display:block;height:100%;background:linear-gradient(90deg,var(--pink),var(--yellow));border-radius:99px;transition:width .3s}
+.combo{font-weight:900;color:#ff8a3d;white-space:nowrap}
+.combo.hot{animation:pulse .6s infinite alternate}
+.stem{font-size:1.02rem;line-height:1.75;font-weight:700;margin:10px 0 12px;white-space:pre-wrap}
+.items{background:var(--yellow-l);border-radius:12px;padding:10px 14px;margin-bottom:12px;line-height:1.7;font-size:.95rem}
+.qimg{max-width:100%;border-radius:12px;border:2px solid var(--line);margin:6px 0;background:#fff}
+.choices{display:flex;flex-direction:column;gap:9px}
+.choice{display:flex;gap:10px;align-items:flex-start;text-align:left;padding:13px 14px;border-radius:14px;border:2px solid var(--line);
+  background:#fff;font-weight:700;line-height:1.55;box-shadow:0 4px 0 var(--line);transition:transform .08s,background .15s}
+.choice:active{transform:translateY(2px)}
+.choice .no{flex:none;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:var(--pink-l);color:var(--pink);font-weight:900}
+.choice.sel{border-color:var(--pink);background:var(--pink-l)}
+.choice.ok{border-color:var(--mint);background:var(--mint-l)}.choice.ok .no{background:var(--mint);color:#fff}
+.choice.ng{border-color:var(--red);background:var(--red-l)}.choice.ng .no{background:var(--red);color:#fff}
+.choice.off{opacity:.35;text-decoration:line-through}
+.choice[disabled]{pointer-events:none}
+.tfcard{background:linear-gradient(135deg,var(--lav-l),var(--blue-l));border-radius:16px;padding:18px;font-size:1.1rem;font-weight:800;line-height:1.7;text-align:center;margin:8px 0 14px}
+.tfask{text-align:center;font-weight:800;color:var(--mute);margin-bottom:10px}
+.tfbtns{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.tfbtn{font-size:2.6rem;font-weight:900;padding:14px 0;border-radius:18px;background:#fff;border:3px solid var(--line);box-shadow:0 5px 0 var(--line)}
+.tfbtn.o{color:var(--mint)}.tfbtn.x{color:var(--red)}
+.tfbtn.ok{background:var(--mint-l);border-color:var(--mint)}.tfbtn.ng{background:var(--red-l);border-color:var(--red)}
+.tfbtn[disabled]{pointer-events:none}
+.fb{margin-top:14px;border-radius:var(--r);padding:16px;border:2px solid}
+.fb.ok{background:var(--mint-l);border-color:var(--mint)}.fb.ng{background:var(--red-l);border-color:var(--red)}
+.verdict{font-size:1.25rem;font-weight:900;margin-bottom:10px}
+.explain{display:flex;gap:10px;align-items:flex-start;margin:10px 0}
+.explain .av{width:70px;flex:none}
+.explain .sp{flex:1;background:#fff;border-radius:16px;padding:12px 14px;position:relative;line-height:1.75;font-size:.93rem;border:2px solid var(--line)}
+.explain .sp:before{content:"";position:absolute;left:-10px;top:20px;border:8px solid transparent;border-right-color:#fff}
+.tname{font-weight:900;font-size:.82rem;color:var(--lav);margin-bottom:4px}
+details.more{background:#fff;border-radius:12px;padding:10px 12px;margin-top:8px;border:2px solid var(--line)}
+details.more summary{font-weight:800;cursor:pointer;font-size:.9rem}
+.ce{padding:6px 0;border-bottom:1px dashed var(--line);font-size:.88rem;line-height:1.65}.ce:last-child{border:none}
+.ce b.ok{color:var(--mint)}
+/* キャラ */
+.av img,.slot img,.gal img,.hero img{width:100%;height:auto;display:block;filter:drop-shadow(0 3px 3px rgba(0,0,0,.12))}
+.emoji{aspect-ratio:1;border-radius:50%;display:grid;place-items:center;background:var(--yellow-l);font-size:2rem;border:3px solid #fff;box-shadow:var(--sh)}
+#stage{position:fixed;left:0;right:0;bottom:0;z-index:40;pointer-events:none;display:flex;justify-content:space-between;padding:0 6px calc(6px + env(safe-area-inset-bottom))}
+.slot{width:min(130px,26vw);opacity:0;transform:translateY(40px) scale(.9);transition:all .35s cubic-bezier(.2,1.4,.4,1);position:relative}
+.slot.show{opacity:1;transform:none}
+.slot.show img,.slot.show .emoji{animation:hop .6s ease}
+.bub{position:absolute;bottom:92%;background:#fff;border:2.5px solid var(--ink);border-radius:16px;padding:8px 11px;font-size:.82rem;font-weight:800;
+  line-height:1.45;width:max-content;max-width:min(230px,58vw);box-shadow:0 4px 0 rgba(0,0,0,.08)}
+.slot.L .bub{left:8px}.slot.R .bub{right:8px}
+.bub:after{content:"";position:absolute;bottom:-11px;border:7px solid transparent;border-top-color:var(--ink)}
+.slot.L .bub:after{left:22px}.slot.R .bub:after{right:22px}
+.hero{display:flex;gap:12px;align-items:flex-end}.hero .av{width:110px;flex:none}
+.hero .sp{flex:1;background:var(--pink-l);border-radius:18px;padding:14px;font-weight:800;line-height:1.6}
+/* 成績 */
+.stat{background:#fff;border:2px solid var(--line);border-radius:14px;padding:12px;text-align:center}
+.stat b{display:block;font-size:1.5rem;color:var(--pink)}.stat span{font-size:.78rem;color:var(--mute);font-weight:700}
+.bar{height:12px;border-radius:99px;background:var(--line);overflow:hidden;margin-top:4px}
+.bar i{display:block;height:100%;border-radius:99px}
+.drow{padding:8px 0;border-bottom:1px dashed var(--line);font-size:.88rem}
+table{width:100%;border-collapse:collapse;font-size:.85rem}td,th{padding:7px 6px;border-bottom:1px dashed var(--line);text-align:left}
+.gal{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:10px}
+.gal .g{background:#fff;border:2px solid var(--line);border-radius:14px;padding:8px;font-size:.72rem;text-align:center}
+.gal .g.err{border-color:var(--red)}
+.field{display:flex;flex-direction:column;gap:4px;font-weight:800;font-size:.85rem;flex:1;min-width:140px}
+.field input{padding:11px 12px;border-radius:12px;border:2px solid var(--line);background:#fff}
+.install{background:var(--mint-l);border:2px solid var(--mint);border-radius:var(--r);padding:14px;margin-bottom:16px;font-size:.88rem;line-height:1.7}
+.install h3{margin:0 0 6px;font-size:.98rem}.install ol{margin:4px 0 6px;padding-left:1.4em}
+.install .x{float:right;font-size:.8rem;color:var(--mute);text-decoration:underline}
+.netbar{background:var(--ink);color:#fff;text-align:center;font-size:.78rem;padding:4px 8px;display:none}
+body.offline .netbar{display:block}
+textarea.code{width:100%;min-height:90px;font:inherit;font-size:.75rem;padding:8px;border:2px solid var(--line);border-radius:12px;word-break:break-all}
+.notice{background:var(--yellow-l);border-radius:12px;padding:10px 12px;font-size:.85rem;line-height:1.6;margin:8px 0}
+pre.preview{background:#fff;border:2px dashed var(--line);border-radius:12px;padding:10px;font-size:.78rem;white-space:pre-wrap;max-height:180px;overflow:auto}
+.big-score{font-size:3rem;font-weight:900;color:var(--pink);text-align:center;line-height:1}
+/* エフェクト */
+.spark{position:fixed;z-index:60;pointer-events:none;font-size:18px;animation:spark .9s ease-out forwards}
+.confetti{position:fixed;top:-20px;z-index:60;width:10px;height:14px;border-radius:3px;pointer-events:none;animation:fall 2.4s linear forwards}
+.pop{animation:pop .45s cubic-bezier(.2,1.6,.4,1)}
+.shake{animation:shake .4s}
+@keyframes pop{0%{transform:scale(.9)}60%{transform:scale(1.06)}100%{transform:scale(1)}}
+@keyframes hop{0%{transform:translateY(0)}30%{transform:translateY(-16px)}60%{transform:translateY(0)}80%{transform:translateY(-5px)}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-7px)}75%{transform:translateX(7px)}}
+@keyframes pulse{to{transform:scale(1.15)}}
+@keyframes spark{to{transform:translate(var(--dx),var(--dy)) scale(.3) rotate(180deg);opacity:0}}
+@keyframes fall{to{transform:translate(var(--dx),110vh) rotate(720deg)}}
+@media (max-width:520px){main{padding:12px 10px 160px}.card{padding:14px}.logo{font-size:.92rem}nav button{padding:6px 8px;font-size:.78rem}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<header><div class="netbar">📴 オフライン中：問題は解けます（提出は電波のある場所で）</div><div class="hwrap">
+  <div class="logo"><b>ST</b>国試<i>トレーナー</i></div>
+  <nav id="nav">
+    <button data-v="home">ホーム</button><button data-v="setup">出題</button>
+    <button data-v="stats">成績</button><button data-v="settings">設定</button>
+  </nav>
+  <button class="iconbtn" id="mute" title="効果音"></button>
+</div></header>
+<main id="app"></main>
+<div id="stage"><div class="slot L" id="slotL"></div><div class="slot R" id="slotR"></div></div>
+
+<!-- 問題バンク（同じフォルダの bank.js）。無い場合はデモ問題で動きます -->
+<script src="bank.js" onerror="console.info('bank.js が見つからないためデモ問題で起動します')"></script>
+<!-- 学校ごとの提出先（同じフォルダの school.js）。無い場合は提出ボタンが使えない状態で起動します -->
+<script>
+/* 提出先の読み込み：URLの末尾に ?s=学校コード があれば schools/学校コード.js を、無ければ school.js を読む
+   例）…/st-kokushi/?s=yanagawa → schools/yanagawa.js */
+(function(){
+  var m = location.search.match(/[?&]s=([A-Za-z0-9_-]+)/);
+  var src = m ? 'schools/' + m[1].toLowerCase() + '.js' : 'school.js';
+  document.write('<script src="' + src + '" onerror="console.info(\'提出先ファイルが見つかりません：' + src + '\')"><\/script>');
+})();
+</script>
+
+<script>
+/* =====================================================================
+   ★★★ 設定エリア（ここだけ触れば運用できます） ★★★
+   ===================================================================== */
+
+/* ---------- ① キャラクター画像 ----------
+   ・画像は、このHTMLと同じ場所の「chara」フォルダに入れます。
+   ・役割と状態は「ファイル名」から自動で読み取ります。
+       形式：  役割の名前＋番号_状態.webp      例） student1_happy-idea.webp（学生キャラ1_happy-idea.webp も可）
+       ※ スマホ公開（GitHub）で確実に表示するため、配布版は英数字のファイル名にしています
+       ・役割：ファイル名に含まれる語で判定
+           「学生」→学生　「解説」→解説　「アニマル」または「動物」→アニマルサポート　「サポート」→人間サポート
+       ・状態：「_」のあとに英単語で。複数は「-」でつなぐ
+           normal=通常 think=悩み idea=ひらめき happy=正解で喜ぶ sad=不正解で落ち込む combo=連続正解
+           cheer=応援 praise=褒める hint=ヒント explain=解説
+   ・キャラを追加・差し替えるときは、画像を chara に入れて、下の一覧に1行足す（または書き換える）だけ。
+     name は吹き出しや解説に出る名前、topics に書いた語が問題の分野名に含まれると、そのキャラが優先して登場します。 */
+const CHARA_DIR = 'chara/';
+const CHARACTERS = [
+  // ---- 学生（9：うち8・9は不正解時の泣き顔）----
+  { file:'student1_happy-idea.webp',        name:'ひより' },
+  { file:'student2_normal.webp',            name:'りく' },
+  { file:'student3_happy-combo.webp',       name:'みお',  topics:['聴覚','音響'] },
+  { file:'student4_normal-think.webp',  name:'ことね', topics:['聴覚','聴力','補聴'] },
+  { file:'student5_happy.webp',             name:'そうた', topics:['聴覚','聴力','補聴','人工内耳'] },
+  { file:'student6_normal-think.webp',  name:'ゆな',  topics:['言語発達','小児'] },
+  { file:'student7_combo-happy.webp',       name:'はると' },
+  { file:'student8_sad.webp',               name:'ゆな',  topics:['言語発達','小児'] },  // ゆな（6）の泣き顔
+  { file:'student9_sad.webp',               name:'りく' },                              // りく（2）の泣き顔
+  // ---- 解説（4）----
+  { file:'teacher1_explain.webp',  name:'ハカセ' },
+  { file:'teacher2_explain.webp',  name:'まなぶ先生' },
+  { file:'teacher3_explain.webp',  name:'ひらめき先生' },
+  { file:'teacher4_explain.webp',  name:'しおり先生' },
+  // ---- 人間サポート（5）----
+  { file:'support1_cheer.webp',      name:'はな先輩', topics:['嚥下','摂食'] },
+  { file:'support2_hint.webp',       name:'るる先輩' },
+  { file:'support3_hint.webp',       name:'みけ先輩', topics:['嚥下','摂食'] },
+  { file:'support4_cheer-hint.webp', name:'かい先輩' },
+  { file:'support5_cheer.webp',      name:'なつ先輩' },
+  // ---- アニマルサポート（4）----
+  { file:'animal1_praise.webp',      name:'レッサーパンダのパン', topics:['音響','音声'] },
+  { file:'animal2_praise-hint.webp', name:'うさぎのミミ' },
+  { file:'animal3_cheer.webp',       name:'くまのモコ' },
+  { file:'animal4_praise.webp',      name:'ねこのスプーン', topics:['嚥下','摂食'] },
+];
+
+/* ファイル名の語 → 役割・状態の対応表（上から順に判定。「アニマルサポート」はアニマルが先に当たる） */
+const ROLE_WORDS = [
+  ['animal',  ['animal','アニマル','動物']],
+  ['support', ['support','サポート','先輩']],
+  ['teacher', ['teacher','解説']],
+  ['student', ['student','学生']],
+];
+const MOOD_WORDS = {
+  normal:['normal','通常'], think:['think','悩み'], idea:['idea','ひらめき'], happy:['happy','joy','正解'],
+  sad:['sad','落ち込み'], combo:['combo','連続'], cheer:['cheer','応援'], praise:['praise','褒め'],
+  hint:['hint','ヒント'], explain:['explain','解説'],
+};
+
+/* どの場面で、どの役割・状態のキャラを出すか（L=左、R=右） */
+const CAST = {
+  start   :{ L:['student',['normal']],        R:['support',['cheer']] },
+  correct :{ L:['student',['happy']],         R:['animal',['praise']] },
+  combo   :{ L:['student',['combo','happy']], R:['animal',['praise','cheer']] },
+  recover :{ L:['student',['idea']],          R:['animal',['praise']] },
+  wrong   :{ L:['student',['sad']],   R:['support',['cheer','hint']] },
+  hint    :{                                  R:['support',['hint']] },
+  weak    :{ L:['student',['think']],         R:['support',['cheer']] },
+  conquer :{ L:['student',['idea','happy']],  R:['animal',['praise']] },
+  finishHi:{ L:['student',['combo','happy']], R:['animal',['praise']] },
+  finishMd:{ L:['student',['normal']],        R:['support',['cheer']] },
+  finishLo:{ L:['student',['think','sad']],   R:['support',['cheer','hint']] },
+};
+/* セリフ（{n}=コンボ数、{rate}=正答率 に置き換わります） */
+const LINES = {
+  start   :{ student:['よーし、やるぞ！','今日もがんばります！','集中、集中…！'], support:['今日も一緒にがんばろう！','1問ずつ確実にいこう！','肩の力を抜いてね☺'] },
+  correct :{ student:['やった！正解！','よしっ！','わかってきた！'], animal:['すごいね！','その調子だよ〜！','かんぺき✨','ちゃんと覚えてる！'] },
+  combo   :{ student:['{n}問連続正解！','ノッてきた🔥','止まらない…！'], animal:['{n}コンボ！天才かも？','連続{n}問✨すごすぎ！','このまま突っ走ろう！'] },
+  recover :{ student:['なるほど、わかった！','ひらめいた💡'], animal:['リベンジ成功！','ちゃんと取り返したね！'] },
+  wrong   :{ student:['うぅ…間違えた','ここ苦手かも…','次は取る！'], support:['ドンマイ！解説を読めば大丈夫','間違えた問題は弱点リストに入れたよ','惜しい！ポイントを確認しよう','今覚えれば本番で取れる！'] },
+  hint    :{ support:['この選択肢は違うと思うよ','ひとつ消しておいたよ。あとは考えてみて！'] },
+  weak    :{ student:['苦手をつぶすぞ…！'], support:['弱点克服モード、スタート！','ここを越えれば得点アップ！'] },
+  conquer :{ student:['克服できた！'], animal:['弱点ひとつクリア🎉','もう苦手じゃないね！'] },
+  finishHi:{ student:['正答率{rate}%！やったー！'], animal:['合格ラインばっちり✨','すばらしい！'] },
+  finishMd:{ student:['正答率{rate}%…もう少し！'], support:['間違えた所を復習すれば伸びるよ','弱点克服モードで仕上げよう！'] },
+  finishLo:{ student:['正答率{rate}%…くやしい'], support:['最初はみんなこんなもの！','解説を読み返して、もう1回いこう'] },
+};
+
+/* ---------- ② 教員への結果送信（学校ごとの school.js で設定） ----------
+   ・提出先は、このHTMLと同じフォルダの「school.js」に書きます。本体は全校共通のまま使えます。
+   ・school.js は「提出先設定ツール.html」に Googleフォームの事前入力URLを貼ると自動で作れます。
+   ・school.js が無い、または中身が不完全なときは、提出ボタンは使えない表示になります
+     （別の学校のフォームへ誤って送られることはありません）。
+   sendMode : 'prefill' = 入力済みのフォームを開き、学生が自分で[送信]を押す（推奨・確実）
+              'direct'  = アプリのボタンだけで直接送信（送信の成否はアプリ側で確認できません） */
+const SCHOOL = (typeof window.ST_SCHOOL === 'object' && window.ST_SCHOOL) || null;
+const FORM_CONFIG = {
+  enabled   : true,
+  schoolName: SCHOOL?.name || '',
+  viewUrl   : SCHOOL?.formUrl || '',
+  sendMode  : SCHOOL?.sendMode || 'prefill',
+  fields    : SCHOOL?.fields || {},
+};
+const FORM_READY = /^https:\/\/docs\.google\.com\/forms\/.+\/viewform/.test(FORM_CONFIG.viewUrl) && !!FORM_CONFIG.fields.studentId && !!FORM_CONFIG.fields.name;
+
+/* ---------- ③ その他 ---------- */
+const STORE_KEY = 'stTrainerV2';   // 端末内保存のキー（旧版とは別に保存されます）
+const COMBO_SHOW = [3,5,7,10,15,20]; // この回数の連続正解でコンボ演出
+/* ===================== 設定エリアここまで ===================== */
+
+
+/* ------------------------- デモ問題（bank.js が無いとき用） ------------------------- */
+const DEMO_BANK = {
+  kijun:[
+    {code:'XII', name:'発声発語障害・嚥下障害（デモ）', subjects:[{code:'XII-3', name:'摂食嚥下障害', units:[{code:'XII-3-A',name:'基礎'}]}]},
+    {code:'IV', name:'聴覚障害（デモ）', subjects:[{code:'IV-1', name:'聴覚医学', units:[{code:'IV-1-A',name:'聴覚検査'}]}]},
+  ],
+  questions:[
+    {id:'DEMO-1',type:'ai',code:'XII-3-A',stem:'摂食嚥下の5期モデルについて正しいのはどれか。',
+     choices:['先行期は食物を口に取り込む時期である','準備期では咀嚼して食塊を形成する','口腔期は不随意運動である','咽頭期は随意運動である','食道期は約0.5秒で終わる'],
+     answer:[2],explanation:'5期モデルは先行期→準備期→口腔期→咽頭期→食道期。準備期に咀嚼・食塊形成を行う。口腔期は随意、咽頭期・食道期は反射（不随意）である。',
+     choiceExplanations:['誤り。先行期は食物の認知の段階。取り込みは準備期。','正しい。咀嚼して食塊を作る。','誤り。口腔期は随意運動。','誤り。咽頭期は嚥下反射による不随意運動。','誤り。食道期は数秒〜十数秒かかる。']},
+    {id:'DEMO-2',type:'ai',code:'XII-3-A',stem:'改訂水飲みテストについて誤っているのはどれか。',
+     choices:['冷水3mLを用いる','口腔底に水を注ぐ','嚥下後に反復嚥下を2回促す','評価は5段階である','30mLの水を一気に飲ませる'],
+     answer:[5],explanation:'改訂水飲みテスト（MWST）は冷水3mLを口腔底に注ぎ嚥下させ、5段階で評価する。30mLを用いるのは窪田式水飲みテスト。',
+     choiceExplanations:['正しい。','正しい。','正しい。','正しい。','誤り。30mLは窪田式水飲みテスト。']},
+    {id:'DEMO-3',type:'ai',code:'IV-1-A',stem:'純音聴力検査で正しいのはどれか。',
+     choices:['気導閾値は骨導閾値より必ず小さい','伝音難聴では気骨導差がある','感音難聴では気骨導差が大きい','125Hzから16000Hzまで測定する','マスキングは不要である'],
+     answer:[2],explanation:'伝音難聴では骨導は正常で気導のみ低下するため気骨導差（A-B gap）が生じる。感音難聴では気導・骨導ともに低下し差は小さい。',
+     choiceExplanations:['誤り。','正しい。','誤り。感音難聴では差が小さい。','誤り。通常125〜8000Hz。','誤り。両耳の聴力差が大きい場合などに必要。']},
+    {id:'DEMO-4',type:'ai',code:'IV-1-A',stem:'補聴器適合で用いる検査はどれか。',
+     choices:['語音明瞭度検査','ティンパノメトリ','ABR','耳音響放射','カロリックテスト'],
+     answer:[1],explanation:'補聴器装用時と非装用時の語音明瞭度を比較し、適合を評価する。',
+     choiceExplanations:['正しい。','誤り。中耳機能の検査。','誤り。他覚的聴力検査。','誤り。内耳（外有毛細胞）機能の検査。','誤り。前庭機能検査。']},
+  ]
+};
+
+/* ------------------------- 共通の小道具 ------------------------- */
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const br = s => esc(s).replace(/\n/g,'<br>');
+const rnd = a => a[Math.floor(Math.random()*a.length)];
+const shuffle = a => { a=[...a]; for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]} return a; };
+const pct = (c,n) => n ? Math.round(c/n*100) : 0;
+const now = () => new Date();
+const fmtDate = t => { const d=new Date(t); return `${d.getMonth()+1}/${d.getDate()} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`; };
+const ROLE_JA = {student:'学生',teacher:'解説',animal:'アニマル',support:'人間サポート'};
+const ROLE_EMOJI = {student:'🧑‍🎓',teacher:'👩‍🏫',animal:'🐾',support:'🙋'};
+const FMT_JA = {mc:'5択',tf:'〇×',mix:'ミックス'};
+const SRC_JA = {past:'過去問',ai:'AI予想問題',both:'過去問＋AI予想'};
+
+/* ------------------------- 端末内データ（localStorage） ------------------------- */
+function loadStore(){ try{ return JSON.parse(localStorage.getItem(STORE_KEY)) || null; }catch(e){ return null; } }
+let S = Object.assign({ ans:{}, wrong:{}, hist:[], prefs:{sound:true,chara:true}, setup:null, student:{} }, loadStore() || {});
+function save(){ try{ localStorage.setItem(STORE_KEY, JSON.stringify(S)); }catch(e){} }
+
+/* ------------------------- 問題バンクの読み込み ------------------------- */
+let BANK, DEMO = false;
+function initBank(){
+  let raw = null;
+  try{ raw = window.KOKUSHI_BANK || (typeof KOKUSHI_BANK !== 'undefined' ? KOKUSHI_BANK : null); }catch(e){}
+  if(!raw || !Array.isArray(raw.questions)){ raw = DEMO_BANK; DEMO = true; }
+  const nm = o => o && (o.name || o.title || o.label || o.n || o.code) || '';
+  const DOM = {}, SUB = {};
+  (raw.kijun || []).forEach(d => {
+    const dc = d.code || ((d.subjects?.[0]?.code || d.subjects?.[0]?.units?.[0]?.code || '').split('-')[0]);
+    DOM[dc] = { code:dc, name:nm(d) || dc };
+    (d.subjects || []).forEach(s => {
+      const sc = s.code || ((s.units?.[0]?.code || '').split('-').slice(0,2).join('-'));
+      SUB[sc] = { code:sc, name:nm(s) || sc, dom:dc };
+    });
+  });
+  const Q = [];
+  raw.questions.forEach(q => {
+    if(q.excluded) return;
+    const ans = (Array.isArray(q.answer) ? q.answer : [q.answer]).map(Number).filter(n => n >= 1);
+    if(!ans.length || !Array.isArray(q.choices) || q.choices.length < 2) return;
+    const p = String(q.code || '').split('-');
+    const dc = p[0] || '他', sc = p.slice(0,2).join('-') || dc;
+    if(!DOM[dc]) DOM[dc] = { code:dc, name:dc };
+    if(!SUB[sc]) SUB[sc] = { code:sc, name:sc, dom:dc };
+    const m = /^(\d+)([AP])(\d+)/.exec(q.id || '');
+    Q.push(Object.assign({}, q, {
+      ans, dc, sc,
+      src: q.type === 'ai' ? 'ai' : 'past',
+      rnd: +(q.round || (m && m[1]) || 0),
+      need: (/[2２二]つ選べ/.test(q.stem || '') && ans.length >= 2) ? 2 : 1,
+      exp: q.explanation || q.exp || '',
+      cexp: q.choiceExplanations || q.ce || null,
+      iexp: q.itemExplanations || q.ie || null,
+    }));
+  });
+  BANK = { Q, byId:Object.fromEntries(Q.map(q => [q.id, q])), DOM, SUB,
+           rounds:[...new Set(Q.filter(q => q.src==='past' && q.rnd).map(q => q.rnd))].sort((a,b) => a-b) };
+}
+function qLabel(q){
+  if(q.src === 'ai') return 'AI予想問題';
+  const m = /^(\d+)([AP])(\d+)/.exec(q.id || '');
+  return m ? `第${m[1]}回 ${m[2]==='A'?'午前':'午後'} ${+m[3]}` : (q.id || '過去問');
+}
+const domName = dc => BANK.DOM[dc]?.name || dc;
+const subName = sc => BANK.SUB[sc]?.name || sc;
+
+/* ------------------------- キャラクター：ファイル名から自動振り分け ------------------------- */
+let CH = [];
+function parseCharacters(){
+  CH = CHARACTERS.map((e, i) => {
+    const file = typeof e === 'string' ? e : e.file;
+    const base = file.replace(/\.[^.]+$/, '').toLowerCase();
+    const role = (ROLE_WORDS.find(([, ws]) => ws.some(w => base.includes(w.toLowerCase()))) || [null])[0];
+    const toks = base.split(/[_\-\s.]+/), moods = [];
+    for(const t of toks) for(const [m, ws] of Object.entries(MOOD_WORDS)) if(ws.includes(t) && !moods.includes(m)) moods.push(m);
+    if(!moods.length) moods.push(role === 'teacher' ? 'explain' : 'normal');
+    return { file, role, moods, idx:i,
+             name:(typeof e === 'object' && e.name) || `${ROLE_JA[role] || '？'}${i+1}`,
+             topics:(typeof e === 'object' && e.topics) || [] };
+  });
+}
+const lastPick = {};
+function pickChara(role, moods = [], topic = ''){
+  const all = CH.filter(c => c.role === role); if(!all.length) return null;
+  let pool = all.filter(c => moods.some(m => c.moods.includes(m)));
+  if(!pool.length) pool = all;
+  if(topic){ const t = pool.filter(c => c.topics.some(k => topic.includes(k))); if(t.length && Math.random() < .75) pool = t; }
+  if(pool.length > 1) pool = pool.filter(c => c !== lastPick[role]);
+  const c = rnd(pool); lastPick[role] = c; return c;
+}
+function charaImg(c){
+  if(!c) return `<div class="emoji">✨</div>`;
+  return `<img src="${esc(CHARA_DIR + c.file)}" alt="${esc(c.name)}" data-role="${c.role}" data-file="${esc(c.file)}" onerror="charaFail(this)">`;
+}
+/* 画像が見つからないときの再読み込み。
+   Mac からアップロードすると「ポ」「ブ」などが「ホ＋゜」のように分かれた文字で保存され、
+   GitHub などではファイル名が一致しなくなる。そのため、分かれた書き方（NFD）・まとまった書き方（NFC）の順に試す */
+function charaFail(img){
+  const f = img.dataset.file || '', tried = +(img.dataset.retry || 0);
+  const alts = [f.normalize('NFD'), f.normalize('NFC')].filter(x => x !== f);
+  if(tried < alts.length){ img.dataset.retry = tried + 1; img.src = CHARA_DIR + alts[tried]; return; }
+  const d = document.createElement('div'); d.className = 'emoji'; d.textContent = ROLE_EMOJI[img.dataset.role] || '✨'; img.replaceWith(d);
+}
+
+/* 吹き出し付きで画面下に登場させる */
+const Stage = {
+  timers:{},
+  show(slot, c, text, ms = 3200){
+    const el = $('#slot' + slot); if(!el) return;
+    el.classList.remove('show'); void el.offsetWidth;
+    el.innerHTML = (text ? `<div class="bub">${esc(text)}</div>` : '') + charaImg(c);
+    el.classList.add('show');
+    clearTimeout(this.timers[slot]);
+    if(ms) this.timers[slot] = setTimeout(() => el.classList.remove('show'), ms);
+  },
+  token:0,
+  hide(){ this.token++; ['L','R'].forEach(s => { $('#slot'+s)?.classList.remove('show'); clearTimeout(this.timers[s]); }); }
+};
+/* 次の操作まで表示し続ける場面（解答後・ヒント・結果画面） */
+const STAY_EVENTS = ['correct','combo','recover','wrong','conquer','hint','finishHi','finishMd','finishLo'];
+function react(ev, ctx = {}){
+  if(!S.prefs.chara) return;
+  const token = Stage.token;
+  const cast = CAST[ev], lines = LINES[ev] || {}; if(!cast) return;
+  const fill = s => s.replace('{n}', ctx.n ?? '').replace('{rate}', ctx.rate ?? '');
+  ['L','R'].forEach((slot, k) => {
+    if(!cast[slot]) return;
+    const [role, moods] = cast[slot];
+    const c = pickChara(role, moods, ctx.topic || '');
+    const text = lines[role] ? fill(rnd(lines[role])) : '';
+    // 解答後の演出は［次の問題］を押すまで表示し続ける（ms=0）。開始時のあいさつなどは数秒で引っ込む
+    const ms = ctx.ms ?? (STAY_EVENTS.includes(ev) ? 0 : 3400);
+    setTimeout(() => { if(token === Stage.token) Stage.show(slot, c, text, ms); }, k * 180);
+  });
+}
+
+/* ------------------------- 効果音（Web Audio API） ------------------------- */
+const SFX = {
+  ctx:null,
+  tone(f, d, type = 'sine', at = 0, vol = .14){
+    if(!S.prefs.sound) return;
+    try{
+      this.ctx = this.ctx || new (window.AudioContext || window.webkitAudioContext)();
+      const c = this.ctx, t = c.currentTime + at, o = c.createOscillator(), g = c.createGain();
+      o.type = type; o.frequency.setValueAtTime(f, t);
+      g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(vol, t + .01); g.gain.exponentialRampToValueAtTime(.0001, t + d);
+      o.connect(g).connect(c.destination); o.start(t); o.stop(t + d + .02);
+    }catch(e){}
+  },
+  click(){ this.tone(660, .06, 'sine', 0, .05); },
+  ok(){ this.tone(988, .12, 'sine'); this.tone(1319, .25, 'sine', .09); },               // ピンポーン
+  ng(){ this.tone(196, .22, 'triangle', 0, .16); this.tone(165, .3, 'triangle', .12, .14); }, // ブブー（やわらかめ）
+  combo(){ [523,659,784,1047].forEach((f,i) => this.tone(f, .14, 'square', i*.07, .06)); },
+  fanfare(){ [523,659,784,1047,784,1047].forEach((f,i) => this.tone(f, .22, 'triangle', i*.11, .1)); },
+};
+
+/* ------------------------- エフェクト ------------------------- */
+function sparkle(el, n = 14){
+  const r = el?.getBoundingClientRect?.() || {left:innerWidth/2, top:innerHeight/2, width:0, height:0};
+  const x = r.left + r.width/2, y = r.top + r.height/2;
+  for(let i = 0; i < n; i++){
+    const s = document.createElement('span'); s.className = 'spark';
+    s.textContent = rnd(['✨','⭐','💖','🌟','✦']);
+    const a = Math.random()*Math.PI*2, d = 50 + Math.random()*80;
+    s.style.left = x + 'px'; s.style.top = y + 'px';
+    s.style.setProperty('--dx', Math.cos(a)*d + 'px'); s.style.setProperty('--dy', Math.sin(a)*d + 'px');
+    document.body.appendChild(s); setTimeout(() => s.remove(), 950);
+  }
+}
+function confetti(n = 60){
+  const cols = ['#ff7aa8','#3cc7a8','#ffc94d','#a98bff','#5aa9ff'];
+  for(let i = 0; i < n; i++){
+    const c = document.createElement('span'); c.className = 'confetti';
+    c.style.left = Math.random()*100 + 'vw'; c.style.background = rnd(cols);
+    c.style.animationDelay = Math.random()*.6 + 's'; c.style.setProperty('--dx', (Math.random()*160-80) + 'px');
+    document.body.appendChild(c); setTimeout(() => c.remove(), 3200);
+  }
+}
+const anim = (el, cls) => { if(!el) return; el.classList.remove(cls); void el.offsetWidth; el.classList.add(cls); };
+
+/* ------------------------- 画面切り替え ------------------------- */
+let view = 'home';
+function go(v){
+  view = v; Stage.hide();
+  document.querySelectorAll('#nav button').forEach(b => b.classList.toggle('on', b.dataset.v === v));
+  ({home:renderHome, setup:renderSetup, stats:renderStats, settings:renderSettings, quiz:renderQuiz, result:renderResult})[v]();
+  scrollTo(0, 0);
+}
+document.getElementById('nav').addEventListener('click', e => {
+  const b = e.target.closest('button'); if(!b) return;
+  if(view === 'quiz' && SES && !SES.done && !confirm('解答中の問題を中断しますか？（ここまでの解答は記録されています）')) return;
+  SFX.click(); go(b.dataset.v);
+});
+function paintMute(){ $('#mute').textContent = S.prefs.sound ? '🔊' : '🔇'; }
+$('#mute').onclick = () => { S.prefs.sound = !S.prefs.sound; save(); paintMute(); SFX.click(); };
+
+/* ------------------------- ホーム ------------------------- */
+function totals(){
+  let n = 0, c = 0, uniq = 0;
+  for(const q of BANK.Q){ const a = S.ans[q.id]; if(a){ n += a.n; c += a.c; uniq++; } }
+  return { n, c, uniq, wrong:Object.keys(S.wrong).filter(id => BANK.byId[id]).length };
+}
+function renderHome(){
+  const t = totals(), c = pickChara('student', ['normal']);
+  const hi = new Date().getHours(), greet = hi < 11 ? 'おはよう！' : hi < 18 ? 'こんにちは！' : 'こんばんは！';
+  $('#app').innerHTML = `
+  ${installCard()}
+  ${DEMO ? `<div class="notice">📦 <b>bank.js</b> が見つからないため、デモ問題（4問）で動いています。このHTMLを <b>bank.js</b> と同じフォルダに置くと全問題が使えます。</div>` : ''}
+  <div class="card"><div class="hero"><div class="av">${charaImg(c)}</div>
+    <div class="sp">${greet} 今日も国試対策がんばろう。<br><span class="mute">問題バンク：${BANK.Q.length.toLocaleString()}問 ／ 解いた問題：${t.uniq.toLocaleString()}問</span></div></div></div>
+  <div class="grid2" style="margin-bottom:16px">
+    <div class="stat"><b>${t.n ? pct(t.c, t.n) : '-'}<small style="font-size:.9rem">%</small></b><span>累計正答率</span></div>
+    <div class="stat"><b>${t.n.toLocaleString()}</b><span>累計解答数</span></div>
+    <div class="stat"><b style="color:var(--red)">${t.wrong}</b><span>弱点リスト</span></div>
+    <div class="stat"><b style="color:var(--mint)">${S.hist.length}</b><span>テスト回数</span></div>
+  </div>
+  <div class="card">
+    <button class="btn big" id="hStart">✏️ 問題を解く（出題設定へ）</button>
+    <div class="row" style="margin-top:12px">
+      <button class="btn mint" style="flex:1" id="hQuick" ${S.setup ? '' : 'disabled'}>⚡ 前回の設定で開始</button>
+      <button class="btn lav" style="flex:1" id="hWeak" ${t.wrong ? '' : 'disabled'}>🔥 弱点克服（${t.wrong}問）</button>
+    </div>
+  </div>
+  <p class="mute" style="text-align:center">成績はこの端末のブラウザにだけ保存され、他の人には共有されません。<br>
+  ${FORM_READY ? `結果の提出先：${esc(FORM_CONFIG.schoolName || '設定済み')}` : '結果の提出先：未設定'}</p>`;
+  bindInstallCard();
+  $('#hStart').onclick = () => { SFX.click(); go('setup'); };
+  $('#hQuick').onclick = () => startSession('normal');
+  $('#hWeak').onclick = () => startSession('weak');
+}
+
+/* ------------------------- 出題設定 ------------------------- */
+function defaultSetup(){
+  return { src:'both', rounds:[...BANK.rounds], subs:Object.keys(BANK.SUB), fmt:'mc', count:10, review:true };
+}
+function getSetup(){
+  const d = defaultSetup(), s = Object.assign(d, S.setup || {});
+  s.subs = s.subs.filter(x => BANK.SUB[x]); if(!s.subs.length) s.subs = Object.keys(BANK.SUB);
+  return s;
+}
+function tfEligible(q){
+  return q.ans.length === 1 && q.need === 1 && !(q.items && q.items.length) && !(q.images && q.images.length)
+      && !/図|写真/.test(q.stem || '') && q.choices.length >= 4;
+}
+function poolFor(st){
+  return BANK.Q.filter(q =>
+    (st.src === 'both' || q.src === st.src) &&
+    (q.src !== 'past' || st.rounds.includes(q.rnd)) &&
+    st.subs.includes(q.sc) &&
+    (st.review || !q.needsReview) &&
+    (st.fmt !== 'tf' || tfEligible(q)));
+}
+let SU;
+function renderSetup(){
+  SU = getSetup();
+  const seg = (key, opts) => `<div class="seg" data-k="${key}">${opts.map(([v,l]) => `<button data-v="${v}" class="${SU[key]===v?'on':''}">${l}</button>`).join('')}</div>`;
+  const subsByDom = {}; Object.values(BANK.SUB).forEach(s => (subsByDom[s.dom] = subsByDom[s.dom] || []).push(s));
+  const cnt = {}; BANK.Q.forEach(q => cnt[q.sc] = (cnt[q.sc] || 0) + 1);
+  $('#app').innerHTML = `
+  <div class="card"><h2>📚 出題元</h2>${seg('src',[['both','両方'],['past','過去問'],['ai','AI予想問題']])}
+    <div id="roundBox" style="margin-top:14px">
+      <div class="row" style="justify-content:space-between;margin-bottom:8px"><b style="font-size:.9rem">実施回（過去問）</b>
+        <div class="row" style="gap:6px"><button class="chip" data-rq="all">全回</button><button class="chip" data-rq="r5">直近5回</button><button class="chip" data-rq="none">解除</button></div></div>
+      <div class="chips" id="rounds">${BANK.rounds.map(r => `<button class="chip ${SU.rounds.includes(r)?'on':''}" data-r="${r}">第${r}回</button>`).join('') || '<span class="mute">過去問がありません</span>'}</div>
+    </div></div>
+  <div class="card"><h2>🎯 問題の形式</h2>${seg('fmt',[['mc','5択'],['tf','〇×'],['mix','ミックス']])}
+    <p class="mute" style="margin:8px 0 0">〇×は、5択問題の選択肢を1つずつ「正しい？」の形で出題します（組合せ問題・図の問題は5択で出題）。</p></div>
+  <div class="card"><div class="row" style="justify-content:space-between"><h2 style="margin:0">🗂 科目・単元</h2>
+    <div class="row" style="gap:6px"><button class="chip" id="allSub">すべて</button><button class="chip" id="noSub">解除</button></div></div>
+    <div style="margin-top:12px" id="doms">${Object.values(BANK.DOM).map(d => `
+      <details class="dom" data-d="${esc(d.code)}"><summary><span class="cb" data-dc="${esc(d.code)}"></span>
+        <span style="flex:1">${esc(d.code)}　${esc(d.name)}</span><span class="mute">▾</span></summary>
+        <div class="subs chips">${(subsByDom[d.code]||[]).map(s => `<button class="chip" data-s="${esc(s.code)}" ${cnt[s.code]?'':'disabled'}>${esc(s.name)} <span class="mute">${cnt[s.code]||0}</span></button>`).join('')}</div>
+      </details>`).join('')}</div></div>
+  <div class="card"><h2>🔢 問題数</h2>${seg('count',[[5,'5'],[10,'10'],[20,'20'],[30,'30'],[50,'50'],[9999,'全部']])}
+    <label class="row" style="margin-top:12px;font-size:.88rem;font-weight:700"><input type="checkbox" id="rv" ${SU.review?'checked':''}> 「要確認」の付いた問題も出題する</label></div>
+  <div class="card" style="position:sticky;bottom:8px;z-index:20">
+    <div class="mute" id="poolInfo" style="text-align:center;margin-bottom:8px"></div>
+    <div class="row"><button class="btn big" style="flex:2" id="go">スタート ▶</button>
+    <button class="btn lav" style="flex:1;padding:16px 8px" id="goWeak">🔥 弱点克服</button></div></div>`;
+
+  const paint = () => {
+    document.querySelectorAll('.seg').forEach(g => g.querySelectorAll('button').forEach(b => b.classList.toggle('on', String(SU[g.dataset.k]) === b.dataset.v)));
+    document.querySelectorAll('#rounds .chip').forEach(b => b.classList.toggle('on', SU.rounds.includes(+b.dataset.r)));
+    $('#roundBox').style.display = SU.src === 'ai' ? 'none' : '';
+    document.querySelectorAll('[data-s]').forEach(b => b.classList.toggle('on', SU.subs.includes(b.dataset.s)));
+    document.querySelectorAll('.cb[data-dc]').forEach(cb => {
+      const ss = Object.values(BANK.SUB).filter(s => s.dom === cb.dataset.dc && cnt[s.code]).map(s => s.code);
+      const k = ss.filter(x => SU.subs.includes(x)).length;
+      cb.className = 'cb' + (ss.length && k === ss.length ? ' on' : k ? ' part' : ''); cb.textContent = ss.length && k === ss.length ? '✓' : k ? '−' : '';
+    });
+    const n = poolFor(SU).length, w = totals().wrong;
+    $('#poolInfo').textContent = `条件に合う問題：${n.toLocaleString()}問 → ${Math.min(n, SU.count).toLocaleString()}問出題`;
+    $('#go').disabled = !n; $('#goWeak').disabled = !w; $('#goWeak').textContent = `🔥 弱点克服（${w}）`;
+    S.setup = SU; save();
+  };
+  $('#app').onclick = e => {
+    const b = e.target.closest('button,.cb'); if(!b) return;
+    if(b.closest('.seg')){ const k = b.closest('.seg').dataset.k; SU[k] = k === 'count' ? +b.dataset.v : b.dataset.v; }
+    else if(b.dataset.r){ const r = +b.dataset.r; SU.rounds = SU.rounds.includes(r) ? SU.rounds.filter(x => x !== r) : [...SU.rounds, r]; }
+    else if(b.dataset.rq){ SU.rounds = b.dataset.rq === 'all' ? [...BANK.rounds] : b.dataset.rq === 'r5' ? BANK.rounds.slice(-5) : []; }
+    else if(b.dataset.s){ const s = b.dataset.s; SU.subs = SU.subs.includes(s) ? SU.subs.filter(x => x !== s) : [...SU.subs, s]; }
+    else if(b.dataset.dc){ e.preventDefault(); e.stopPropagation();
+      const ss = Object.values(BANK.SUB).filter(s => s.dom === b.dataset.dc && cnt[s.code]).map(s => s.code);
+      const all = ss.every(x => SU.subs.includes(x));
+      SU.subs = all ? SU.subs.filter(x => !ss.includes(x)) : [...new Set([...SU.subs, ...ss])]; }
+    else if(b.id === 'allSub') SU.subs = Object.keys(BANK.SUB);
+    else if(b.id === 'noSub') SU.subs = [];
+    else if(b.id === 'go') return startSession('normal');
+    else if(b.id === 'goWeak') return startSession('weak');
+    else return;
+    SFX.click(); paint();
+  };
+  $('#rv').onchange = e => { SU.review = e.target.checked; paint(); };
+  paint();
+}
+
+/* ------------------------- 出題セッション ------------------------- */
+let SES = null;
+function tfKind(stem){
+  if(/(誤って|誤り|正しくない|適切でない|不適切|該当しない|含まれない|みられない|でないのはどれか|ないのはどれか)/.test(stem)) return 'neg';
+  if(/(正しいのはどれか|適切なのはどれか)/.test(stem)) return 'pos';
+  return 'ans';
+}
+function makeItem(q, fmt){
+  let f = fmt === 'mix' ? (tfEligible(q) && Math.random() < .5 ? 'tf' : 'mc') : fmt;
+  if(f === 'tf' && !tfEligible(q)) f = 'mc';
+  if(f === 'mc') return { q, fmt:'mc' };
+  const a = q.ans[0] - 1, others = q.choices.map((_, i) => i).filter(i => i !== a);
+  const ci = Math.random() < .45 ? a : rnd(others), isAns = ci === a, kind = tfKind(q.stem || '');
+  return { q, fmt:'tf', ci, kind, truth: kind === 'neg' ? !isAns : isAns };
+}
+function startSession(mode){
+  const st = getSetup();
+  let pool = mode === 'weak' ? Object.keys(S.wrong).map(id => BANK.byId[id]).filter(Boolean) : poolFor(st);
+  if(mode === 'weak' && st.fmt === 'tf' && pool.some(tfEligible)) pool = pool.filter(tfEligible);
+  if(!pool.length){ alert(mode === 'weak' ? '弱点リストは空です。すばらしい！' : '条件に合う問題がありません。'); return; }
+  const qs = shuffle(pool).slice(0, Math.min(st.count, pool.length));
+  const fmt = mode === 'weak' && st.fmt === 'tf' && !pool.some(tfEligible) ? 'mc' : st.fmt;
+  SES = { mode, st, fmt, items:qs.map(q => makeItem(q, fmt)), i:0, res:[], combo:0, maxCombo:0, prevWrong:false, done:false, t0:Date.now() };
+  go('quiz');
+  setTimeout(() => react(mode === 'weak' ? 'weak' : 'start'), 250);
+}
+function renderQuiz(){
+  const it = SES.items[SES.i], q = it.q, n = SES.items.length;
+  it.answered = false; it.sel = []; it.hint = null;
+  const tags = `<span class="badge">${esc(qLabel(q))}</span> <span class="badge dm">${esc(domName(q.dc))}</span>
+    ${q.src==='ai'?'<span class="badge ai">AI作成</span>':''} ${q.needsReview?'<span class="badge rv">要確認</span>':''}
+    ${SES.mode==='weak'?'<span class="badge rv">弱点克服</span>':''}`;
+  const items = q.items && q.items.length ? `<div class="items">${q.items.map(x => `<div><b>${esc(x.k)}.</b> ${br(x.t)}</div>`).join('')}</div>` : '';
+  const imgs = (q.images || []).map(s => `<img class="qimg" src="${esc(s)}" alt="問題の図" loading="lazy">`).join('');
+  let body;
+  if(it.fmt === 'tf'){
+    body = `<div class="mute" style="font-weight:700">問：${br(q.stem)}</div>
+      <div class="tfcard">「${br(q.choices[it.ci])}」</div>
+      <div class="tfask">${it.kind === 'ans' ? 'この選択肢は「正答」？' : 'この記述は正しい？'}</div>
+      <div class="tfbtns"><button class="tfbtn o" data-tf="1">〇</button><button class="tfbtn x" data-tf="0">×</button></div>`;
+  }else{
+    body = `<div class="stem">${br(q.stem)}${q.need===2?' <span class="badge rv">2つ選ぶ</span>':''}</div>${items}${imgs}
+      <div class="choices">${q.choices.map((c,i) => `<button class="choice" data-c="${i}"><span class="no">${i+1}</span><span>${br(c)}</span></button>`).join('')}</div>
+      <div class="row" style="margin-top:12px">
+        ${q.need===2 ? `<button class="btn" id="decide" disabled style="flex:1">これで決定</button>` : ''}
+        ${q.need===1 && q.choices.length > 2 ? `<button class="btn ghost" id="hintBtn" style="flex:1">💡 ヒント（1つ消す）</button>` : ''}
+      </div>`;
+  }
+  $('#app').innerHTML = `
+    <div class="qtop"><b>${SES.i+1} / ${n}</b><div class="prog"><i style="width:${SES.i/n*100}%"></i></div>
+      <span class="combo ${SES.combo>=3?'hot':''}" id="combo">${SES.combo>=2?`🔥${SES.combo}`:''}</span></div>
+    <div class="card" id="qcard"><div class="row" style="gap:6px">${tags}</div>${body}</div><div id="fb"></div>`;
+  $('#app').onclick = e => {
+    const c = e.target.closest('[data-c]'), t = e.target.closest('[data-tf]');
+    if(c && !it.answered){
+      const i = +c.dataset.c; if(i === it.hint) return; SFX.click();
+      if(q.need === 2){
+        it.sel = it.sel.includes(i) ? it.sel.filter(x => x !== i) : [...it.sel, i].slice(-2);
+        document.querySelectorAll('.choice').forEach(b => b.classList.toggle('sel', it.sel.includes(+b.dataset.c)));
+        $('#decide').disabled = it.sel.length !== 2;
+      }else{ it.sel = [i]; judge(); }
+    }else if(t && !it.answered){ it.sel = [+t.dataset.tf]; judge(); }
+    else if(e.target.id === 'decide') judge();
+    else if(e.target.id === 'hintBtn' && it.hint == null){
+      const wrongs = q.choices.map((_,i) => i).filter(i => !q.ans.includes(i+1));
+      it.hint = rnd(wrongs); const el = document.querySelector(`.choice[data-c="${it.hint}"]`); el.classList.add('off');
+      e.target.disabled = true; react('hint', { topic:domName(q.dc) + subName(q.sc) });
+    }else if(e.target.id === 'next') next();
+  };
+}
+function judge(){
+  const it = SES.items[SES.i], q = it.q; it.answered = true;
+  let ok;
+  if(it.fmt === 'tf') ok = (it.sel[0] === 1) === it.truth;
+  else if(q.need === 2) ok = it.sel.length === 2 && it.sel.every(i => q.ans.includes(i+1));
+  else ok = q.ans.includes(it.sel[0] + 1);
+  // 記録（この端末だけ）
+  const a = S.ans[q.id] = S.ans[q.id] || { n:0, c:0 };
+  a.n++; if(ok) a.c++; a.last = ok ? 1 : 0; a.t = Date.now();
+  let conquered = false;
+  if(!ok) S.wrong[q.id] = Date.now();
+  else if(SES.mode === 'weak' && S.wrong[q.id]){ delete S.wrong[q.id]; conquered = true; }
+  save();
+  SES.res.push({ id:q.id, ok, fmt:it.fmt, dc:q.dc, sc:q.sc, hint:it.hint != null });
+  // 見た目
+  if(it.fmt === 'tf'){
+    document.querySelectorAll('.tfbtn').forEach(b => { b.disabled = true; const v = +b.dataset.tf === 1;
+      if(v === it.truth) b.classList.add('ok'); else if(+b.dataset.tf === it.sel[0]) b.classList.add('ng'); });
+  }else{
+    document.querySelectorAll('.choice').forEach(b => { const i = +b.dataset.c; b.disabled = true;
+      if(q.ans.includes(i+1)) b.classList.add('ok'); else if(it.sel.includes(i)) b.classList.add('ng'); });
+    $('#hintBtn') && ($('#hintBtn').disabled = true);
+  }
+  const topic = domName(q.dc) + subName(q.sc);
+  if(ok){
+    SES.combo++; SES.maxCombo = Math.max(SES.maxCombo, SES.combo);
+    anim($('#qcard'), 'pop'); sparkle(document.querySelector('.choice.ok,.tfbtn.ok') || $('#qcard'), SES.combo >= 3 ? 22 : 14);
+    if(COMBO_SHOW.includes(SES.combo)){ SFX.combo(); react('combo', { n:SES.combo, topic }); }
+    else { SFX.ok(); react(conquered ? 'conquer' : SES.prevWrong ? 'recover' : 'correct', { topic }); }
+  }else{
+    SES.combo = 0; SFX.ng(); anim($('#qcard'), 'shake'); react('wrong', { topic });
+  }
+  SES.prevWrong = !ok;
+  const cb = $('#combo'); cb.textContent = SES.combo >= 2 ? `🔥${SES.combo}` : ''; cb.classList.toggle('hot', SES.combo >= 3);
+  renderFeedback(it, ok, conquered);
+}
+/* 解説欄のラベル：「未監修」は表示しない（例：「AI作成・未監修」→「AI作成」） */
+function reviewLabel(q){ return String(q.review || '').replace(/[・\s]*未監修/g, '').trim(); }
+function renderFeedback(it, ok, conquered){
+  const q = it.q, t = pickChara('teacher', ['explain'], domName(q.dc) + subName(q.sc));
+  const ansTxt = q.ans.join('・');
+  let verdict = ok ? `⭕ 正解！${conquered ? '　弱点克服🎉' : ''}` : '❌ 不正解…';
+  let sub = '';
+  if(it.fmt === 'tf'){
+    sub = `正しくは <b>${it.truth ? '〇' : '×'}</b>。この問題の正答は ${ansTxt} 「${esc(q.choices[q.ans[0]-1])}」`;
+  }else sub = `正答：<b>${ansTxt}</b>${q.ans.length > 1 && q.need === 1 ? '（複数正答）' : ''}`;
+  const mainExp = it.fmt === 'tf' && q.cexp && q.cexp[it.ci] ? `<b>この選択肢：</b>${br(q.cexp[it.ci])}<br><br>${br(q.exp)}` : br(q.exp || '解説は準備中です。');
+  const ce = q.cexp ? `<details class="more" ${it.fmt==='mc' && !ok ? 'open' : ''}><summary>選択肢ごとの解説</summary>
+      ${q.choices.map((c,i) => `<div class="ce"><b class="${q.ans.includes(i+1)?'ok':''}">${i+1}. ${esc(c)}</b><br>${br(q.cexp[i] || '')}</div>`).join('')}</details>` : '';
+  const ie = q.iexp && q.items ? `<details class="more"><summary>項目ごとの解説（a〜e）</summary>
+      ${q.items.map((x,i) => `<div class="ce"><b>${esc(x.k)}. ${esc(x.t)}</b><br>${br(q.iexp[i] || '')}</div>`).join('')}</details>` : '';
+  const last = SES.i === SES.items.length - 1;
+  $('#fb').innerHTML = `<div class="fb ${ok?'ok':'ng'}">
+    <div class="verdict">${verdict}</div><div style="font-size:.92rem">${sub}</div>
+    <div class="explain"><div class="av">${charaImg(t)}</div>
+      <div class="sp"><div class="tname">${esc(t?.name || '解説')}の解説　${reviewLabel(q) ? `<span class="badge ai">${esc(reviewLabel(q))}</span>` : ''}</div>${mainExp}
+      ${q.ref ? `<div class="mute" style="margin-top:6px">📖 参照：${esc(q.ref)}</div>` : ''}
+      ${q.note ? `<div class="mute" style="margin-top:4px">📝 ${esc(q.note)}</div>` : ''}
+      ${q.needsReview ? `<div class="notice">⚠ 要確認：${esc(typeof q.needsReview === 'string' ? q.needsReview : '教員の確認待ちです')}</div>` : ''}</div></div>
+    ${ce}${ie}
+    <button class="btn big" id="next" style="margin-top:12px">${last ? '結果を見る 🏁' : '次の問題 ▶'}</button></div>`;
+  setTimeout(() => $('#fb')?.scrollIntoView({ behavior:'smooth', block:'nearest' }), 120);
+}
+function next(){
+  SFX.click(); Stage.hide();
+  if(SES.i < SES.items.length - 1){ SES.i++; renderQuiz(); scrollTo(0, 0); }
+  else finish();
+}
+function finish(){
+  SES.done = true;
+  const n = SES.res.length, c = SES.res.filter(r => r.ok).length, byDom = {}, bySub = {};
+  SES.res.forEach(r => { (byDom[r.dc] = byDom[r.dc] || [0,0])[1]++; if(r.ok) byDom[r.dc][0]++;
+                         (bySub[r.sc] = bySub[r.sc] || [0,0])[1]++; if(r.ok) bySub[r.sc][0]++; });
+  SES.summary = { t:Date.now(), n, c, rate:pct(c,n), mode:SES.mode, fmt:SES.fmt, src:SES.st.src, maxCombo:SES.maxCombo,
+                  byDom, bySub, wrongIds:SES.res.filter(r => !r.ok).map(r => r.id) };
+  S.hist.unshift(SES.summary); S.hist = S.hist.slice(0, 200); save();
+  go('result');
+}
+
+/* ------------------------- 結果 ＆ 教員への送信 ------------------------- */
+function scopeText(sm){
+  const subs = Object.keys(sm.bySub);
+  return subs.length <= 6 ? subs.map(subName).join('、') : `${Object.keys(sm.byDom).map(domName).join('、')}（${subs.length}科目）`;
+}
+function formPayload(sm, sid, name){
+  const F = FORM_CONFIG.fields;
+  const vals = {
+    studentId:sid, name, datetime:new Date(sm.t).toLocaleString('ja-JP'),
+    mode:sm.mode === 'weak' ? '弱点克服' : '通常', format:FMT_JA[sm.fmt], scope:`${SRC_JA[sm.src]}／${scopeText(sm)}`,
+    score:String(sm.c), total:String(sm.n), rate:String(sm.rate),
+    detail:Object.entries(sm.bySub).map(([k,[c,n]]) => `${subName(k)} ${c}/${n}`).join('; ').slice(0, 900),
+    wrongIds:sm.wrongIds.join(',').slice(0, 600),
+  };
+  const p = new URLSearchParams();
+  for(const [k, v] of Object.entries(vals)) if(F[k]) p.append(F[k], v);
+  return { vals, p };
+}
+function renderResult(){
+  const sm = SES.summary, r = sm.rate;
+  if(!SES.replay) setTimeout(() => {
+    if(r >= 80){ SFX.fanfare(); confetti(); react('finishHi', { rate:r }); }
+    else if(r >= 60) react('finishMd', { rate:r }); else react('finishLo', { rate:r });
+  }, 300);
+  const configured = FORM_READY;
+  $('#app').innerHTML = `
+  <div class="card" style="text-align:center"><h2>🏁 結果</h2>
+    <div class="big-score">${sm.c}<span style="font-size:1.4rem;color:var(--mute)"> / ${sm.n}</span></div>
+    <div style="font-weight:900;font-size:1.2rem;margin:6px 0">正答率 ${r}%</div>
+    <div class="mute">${sm.mode==='weak'?'弱点克服モード':'通常モード'}・${FMT_JA[sm.fmt]}・最大コンボ ${sm.maxCombo}</div></div>
+  <div class="card"><h3 style="margin-top:0">科目別</h3>${Object.entries(sm.bySub).map(([k,[c,n]]) => barRow(subName(k), c, n)).join('')}</div>
+  ${sm.wrongIds.length ? `<div class="card"><h3 style="margin-top:0">間違えた問題（弱点リストに追加済み）</h3>
+    ${sm.wrongIds.map(id => { const q = BANK.byId[id]; return q ? `<div class="drow"><span class="badge">${esc(qLabel(q))}</span> ${esc((q.stem||'').slice(0,60))}…</div>` : ''; }).join('')}</div>` : ''}
+  <div class="row" style="margin-bottom:16px">
+    <button class="btn mint" style="flex:1" id="again">🔁 同じ設定でもう一度</button>
+    <button class="btn lav" style="flex:1" id="weak" ${totals().wrong?'':'disabled'}>🔥 弱点克服へ</button></div>
+  ${FORM_CONFIG.enabled ? `<div class="card"><h2>📮 教員に結果を提出</h2>
+    <p class="mute" style="margin-top:0">送信ボタンを押したときだけ、下の「送信内容」が教員のGoogleフォームに届きます。それ以外の学習記録はこの端末から外に出ません。</p>
+    ${configured ? `<div class="notice">🏫 提出先：<b>${esc(FORM_CONFIG.schoolName || '（学校名未設定）')}</b> の担当教員のフォーム</div>`
+      : '<div class="notice">⚙ 提出先がまだ設定されていません。担当の先生に確認してください（school.js が必要です）。</div>'}
+    <div class="row"><label class="field">学籍番号<input id="sid" value="${esc(S.student.id||'')}" inputmode="numeric" autocomplete="off"></label>
+      <label class="field">氏名<input id="sname" value="${esc(S.student.name||'')}" autocomplete="off"></label></div>
+    <label class="row" style="margin:10px 0;font-size:.85rem;font-weight:700"><input type="checkbox" id="remember" ${S.student.id?'checked':''}> この端末に学籍番号・氏名を記憶する</label>
+    <details class="more"><summary>送信内容を確認</summary><pre class="preview" id="pv"></pre></details>
+    <button class="btn big" id="send" style="margin-top:12px" ${configured ? '' : 'disabled'}>${FORM_CONFIG.sendMode==='direct'?'📨 教員に送信する':'📨 提出フォームを開く'}</button>
+    <div class="mute" id="sendMsg" style="margin-top:8px;text-align:center"></div></div>` : ''}`;
+  $('#again').onclick = () => startSession(sm.mode === 'weak' ? 'weak' : 'normal');
+  $('#weak').onclick = () => startSession('weak');
+  if(!FORM_CONFIG.enabled) return;
+  const upd = () => { const { vals } = formPayload(sm, $('#sid').value.trim(), $('#sname').value.trim());
+    $('#pv').textContent = Object.entries(vals).filter(([k]) => FORM_CONFIG.fields[k]).map(([k,v]) => `${k}: ${v}`).join('\n'); };
+  $('#sid').oninput = $('#sname').oninput = upd; upd();
+  $('#send').onclick = async () => {
+    if(!FORM_READY){ alert('提出先が設定されていません'); return; }
+    const sid = $('#sid').value.trim(), name = $('#sname').value.trim();
+    if(!sid || !name){ alert('学籍番号と氏名を入力してください'); return; }
+    if(!navigator.onLine){ $('#sendMsg').textContent = '今は通信できません。電波のある場所で、「成績」→「テスト履歴」の［提出］から後で提出できます。'; return; }
+    S.student = $('#remember').checked ? { id:sid, name } : {}; save();
+    const { p } = formPayload(sm, sid, name);
+    if(FORM_CONFIG.sendMode === 'direct'){
+      try{
+        await fetch(FORM_CONFIG.viewUrl.replace(/\/viewform.*$/, '/formResponse'), { method:'POST', mode:'no-cors', body:p });
+        $('#sendMsg').textContent = '送信しました（念のため、届いたか先生に確認してください）'; SFX.ok(); sparkle($('#send'));
+      }catch(e){ $('#sendMsg').textContent = '送信できませんでした。通信状況を確認してください。'; }
+    }else{
+      window.open(FORM_CONFIG.viewUrl + (FORM_CONFIG.viewUrl.includes('?') ? '&' : '?') + 'usp=pp_url&' + p.toString(), '_blank', 'noopener');
+      $('#sendMsg').textContent = '開いたフォームの一番下にある［送信］を押すと提出完了です。';
+    }
+  };
+}
+function barRow(label, c, n){
+  const r = pct(c, n), col = r >= 80 ? 'var(--mint)' : r >= 60 ? 'var(--yellow)' : 'var(--red)';
+  return `<div class="drow"><div class="row" style="justify-content:space-between"><span>${esc(label)}</span><b>${c}/${n}（${r}%）</b></div>
+    <div class="bar"><i style="width:${r}%;background:${col}"></i></div></div>`;
+}
+
+/* ------------------------- 成績ダッシュボード ------------------------- */
+function renderStats(){
+  const D = {}, Sb = {}, tot = {};
+  BANK.Q.forEach(q => { tot[q.dc] = (tot[q.dc]||0) + 1; const a = S.ans[q.id]; if(!a) return;
+    const d = D[q.dc] = D[q.dc] || { n:0, c:0, u:0 }; d.n += a.n; d.c += a.c; d.u++;
+    const s = Sb[q.sc] = Sb[q.sc] || { n:0, c:0, u:0, dom:q.dc }; s.n += a.n; s.c += a.c; s.u++; });
+  const t = totals();
+  const weakest = Object.entries(Sb).filter(([,s]) => s.n >= 3).sort((a,b) => a[1].c/a[1].n - b[1].c/b[1].n).slice(0, 5);
+  $('#app').innerHTML = `
+  <div class="grid2" style="margin-bottom:16px">
+    <div class="stat"><b>${t.n ? pct(t.c,t.n) : '-'}%</b><span>累計正答率</span></div>
+    <div class="stat"><b>${t.uniq.toLocaleString()}</b><span>解いた問題（/${BANK.Q.length.toLocaleString()}）</span></div>
+    <div class="stat"><b>${t.n.toLocaleString()}</b><span>累計解答数</span></div>
+    <div class="stat"><b style="color:var(--red)">${t.wrong}</b><span>弱点リスト</span></div></div>
+  ${weakest.length ? `<div class="card"><h2>🎯 苦手な科目 TOP5</h2>${weakest.map(([k,s]) => barRow(subName(k), s.c, s.n)).join('')}</div>` : ''}
+  <div class="card"><h2>📊 大項目別（タップで科目別）</h2>
+    ${Object.values(BANK.DOM).map(d => { const x = D[d.code] || { n:0, c:0, u:0 };
+      return `<details class="dom"><summary style="display:block">${barRow(`${d.code} ${d.name}`, x.c, x.n)}
+        <div class="mute">解いた問題 ${x.u}/${tot[d.code]||0}</div></summary><div class="subs">
+        ${Object.entries(Sb).filter(([,s]) => s.dom === d.code).map(([k,s]) => barRow(subName(k), s.c, s.n)).join('') || '<span class="mute">まだ解いていません</span>'}</div></details>`; }).join('')}</div>
+  <div class="card"><h2>🗓 テスト履歴</h2>${S.hist.length ? `<div style="overflow-x:auto"><table><tr><th>日時</th><th>形式</th><th>得点</th><th>正答率</th><th></th></tr>
+    ${S.hist.slice(0,30).map((h,i) => `<tr><td>${fmtDate(h.t)}</td><td>${h.mode==='weak'?'🔥':''}${FMT_JA[h.fmt]||''}</td><td>${h.c}/${h.n}</td><td><b>${h.rate}%</b></td><td><button class="chip" data-h="${i}">提出</button></td></tr>`).join('')}</table></div>
+    <p class="mute">［提出］を押すと、そのテストの結果を後から先生に提出できます（圏外で提出できなかったときなど）。</p>`
+    : '<span class="mute">まだ履歴がありません</span>'}</div>`;
+  document.querySelectorAll('[data-h]').forEach(b => b.onclick = () => {
+    const h = S.hist[+b.dataset.h]; if(!h) return; SES = { summary:h, done:true, replay:true }; go('result'); });
+}
+
+/* ------------------------- 設定 ------------------------- */
+function renderSettings(){
+  const bad = CH.filter(c => !c.role);
+  const count = r => CH.filter(c => c.role === r).length;
+  $('#app').innerHTML = `
+  <div class="card"><h2>⚙ 表示と音</h2>
+    <label class="row" style="font-weight:700;margin-bottom:8px"><input type="checkbox" id="pSound" ${S.prefs.sound?'checked':''}> 効果音を鳴らす</label>
+    <label class="row" style="font-weight:700"><input type="checkbox" id="pChara" ${S.prefs.chara?'checked':''}> キャラクターの演出を表示する</label></div>
+  <div class="card"><h2>🧸 キャラクター確認</h2>
+    <p class="mute" style="margin-top:0">ファイル名から読み取った役割と状態です。画像が表示されない場合は、chara フォルダとファイル名を確認してください。</p>
+    <div class="row" style="gap:6px;margin-bottom:10px">${Object.keys(ROLE_JA).map(r => `<span class="badge">${ROLE_JA[r]} ${count(r)}</span>`).join('')}
+      ${bad.length ? `<span class="badge rv">役割不明 ${bad.length}</span>` : ''}</div>
+    <div class="gal">${CH.map(c => `<div class="g ${c.role?'':'err'}">${charaImg(c)}<b>${esc(c.name)}</b><br>
+      ${c.role ? ROLE_JA[c.role] : '<span style="color:var(--red)">役割不明</span>'}<br><span class="mute">${c.moods.join(', ')}${c.topics.length?'<br>得意:'+esc(c.topics.join('・')):''}</span><br>
+      <span class="mute" style="word-break:break-all">${esc(c.file)}</span></div>`).join('')}</div>
+    <div class="row" style="margin-top:12px">${Object.keys(CAST).map(ev => `<button class="chip" data-ev="${ev}">${ev}</button>`).join('')}</div>
+    <p class="mute">↑ 押すと、その場面の登場演出を試せます。</p></div>
+  <div class="card"><h2>💾 学習データ（この端末のみ）</h2>
+    <div class="row"><button class="btn ghost" id="exp">📤 ファイルに書き出す</button>
+      <label class="btn ghost">📥 ファイルから読み込む<input type="file" id="imp" accept=".json,application/json,text/plain" hidden></label>
+      <button class="btn ghost" id="clrW">弱点リストを空にする</button>
+      <button class="btn ghost" style="color:var(--red)" id="reset">全データ削除</button></div>
+    <p class="mute">機種変更や別のブラウザへ移るときは「書き出す」→ 新しい端末で「読み込む」で引き継げます。</p>
+    <details class="more"><summary>ファイルが使いにくいとき（コピー＆貼り付けで引き継ぐ）</summary>
+      <p class="mute">① 元の端末で［コードをコピー］→ LINEのメモやメールなどに貼って自分に送る。② 新しい端末でそのコードをコピーし、下の枠に貼って［このコードで読み込む］。</p>
+      <div class="row"><button class="btn ghost" id="cpy">📋 コードをコピー</button></div>
+      <textarea class="code" id="codeIn" placeholder="ここにコードを貼り付け"></textarea>
+      <div class="row" style="margin-top:6px"><button class="btn ghost" id="codeLoad">このコードで読み込む</button></div></details></div>
+  <div class="card"><h2>📱 アプリについて</h2>
+    <p class="mute" style="margin:0">バージョン ${APP_VER}　／　${isStandalone() ? 'ホーム画面のアイコンから起動中' : 'ブラウザで表示中'}${navigator.serviceWorker && navigator.serviceWorker.controller ? '　／　オフライン対応済み' : ''}<br>
+    結果の提出先：${FORM_READY ? esc(FORM_CONFIG.schoolName || '設定済み') : '未設定'}</p>
+    <button class="btn ghost" id="showInst" style="margin-top:10px">ホーム画面に追加する方法を見る</button></div>`;
+  $('#pSound').onchange = e => { S.prefs.sound = e.target.checked; save(); paintMute(); };
+  $('#pChara').onchange = e => { S.prefs.chara = e.target.checked; save(); };
+  document.querySelectorAll('[data-ev]').forEach(b => b.onclick = () => react(b.dataset.ev, { n:5, rate:85 }));
+  $('#exp').onclick = async () => {
+    const name = `st-trainer-${new Date().toISOString().slice(0,10)}.json`, text = JSON.stringify(S);
+    try{ const file = new File([text], name, { type:'application/json' });
+      if(navigator.canShare && navigator.canShare({ files:[file] })){ await navigator.share({ files:[file], title:'ST国試トレーナー 学習データ' }); return; }
+    }catch(e){ if(e && e.name === 'AbortError') return; }
+    const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([text], { type:'application/json' })); a.download = name; a.click(); };
+  const importText = t => { try{ const d = JSON.parse(String(t).trim()); if(!d || !d.ans) throw 0;
+      if(!confirm('この端末の学習データを、読み込むデータで置き換えます。よろしいですか？')) return;
+      S = Object.assign(S, d); save(); alert('読み込みました'); go('stats'); }catch(x){ alert('データの形式が違います'); } };
+  $('#imp').onchange = e => { const f = e.target.files[0]; if(!f) return; const r = new FileReader(); r.onload = () => importText(r.result); r.readAsText(f); };
+  $('#cpy').onclick = async () => { const t = JSON.stringify(S);
+    try{ await navigator.clipboard.writeText(t); $('#cpy').textContent = '✅ コピーしました'; }
+    catch(e){ $('#codeIn').value = t; $('#codeIn').select(); alert('自動コピーできませんでした。枠の中のコードを長押しして「すべてを選択」→「コピー」してください。'); } };
+  $('#codeLoad').onclick = () => importText($('#codeIn').value);
+  $('#showInst').onclick = () => { S.prefs.hideInstall = false; save(); go('home'); };
+  $('#clrW').onclick = () => { if(confirm('弱点リストを空にしますか？')){ S.wrong = {}; save(); alert('空にしました'); } };
+  $('#reset').onclick = () => { if(confirm('この端末の成績・履歴をすべて削除します。よろしいですか？')){
+    S = { ans:{}, wrong:{}, hist:[], prefs:S.prefs, setup:null, student:{} }; save(); go('home'); } };
+}
+
+/* ------------------------- スマホ対応（ホーム画面追加・オフライン） ------------------------- */
+const APP_VER = '3.0（2026-10-22）';
+function isStandalone(){ return (window.matchMedia && matchMedia('(display-mode: standalone)').matches) || navigator.standalone === true; }
+const IS_IOS = /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+const IS_MOBILE = IS_IOS || /Android|Mobile/.test(navigator.userAgent);
+let installEvt = null;
+window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); installEvt = e; if(view === 'home') go('home'); });
+window.addEventListener('appinstalled', () => { installEvt = null; if(view === 'home') go('home'); });
+function installCard(){
+  if(isStandalone() || !IS_MOBILE || S.prefs.hideInstall) return '';
+  const body = IS_IOS
+    ? `<ol><li>Safari の画面下にある <b>共有ボタン</b>（四角から↑が出ているマーク）を押す</li>
+         <li><b>「ホーム画面に追加」</b>を押す（見つからなければ下にスクロール）</li><li>右上の<b>「追加」</b>を押す</li></ol>
+       <b>⚠ iPhoneでは、ブラウザで解いた記録はホーム画面のアイコン側に引き継がれません。</b>これからはアイコンから開いてください（記録を移すときは「設定」→「学習データ」）。`
+    : installEvt ? `<button class="btn mint" id="doInstall" style="width:100%">📲 ホーム画面に追加する</button>`
+    : `<ol><li>Chrome の右上の <b>︙</b>（縦の点3つ）を押す</li><li><b>「ホーム画面に追加」</b>または<b>「アプリをインストール」</b>を押す</li><li><b>「追加」</b>（または「インストール」）を押す</li></ol>`;
+  return `<div class="install"><button class="x" id="hideInst">閉じる</button><h3>📲 ホーム画面に追加すると、アプリのように使えます</h3>${body}
+    <div class="mute">一度開いたあとは、電波がない場所でも問題を解けます。</div></div>`;
+}
+function bindInstallCard(){
+  const h = $('#hideInst'); if(h) h.onclick = () => { S.prefs.hideInstall = true; save(); go('home'); };
+  const d = $('#doInstall'); if(d) d.onclick = async () => { if(!installEvt) return; installEvt.prompt(); try{ await installEvt.userChoice; }catch(e){} installEvt = null; go('home'); };
+}
+function paintNet(){ document.body.classList.toggle('offline', !navigator.onLine); }
+window.addEventListener('online', paintNet); window.addEventListener('offline', paintNet);
+if(/^https?:$/.test(location.protocol) && 'serviceWorker' in navigator){
+  window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(e => console.info('オフライン機能を開始できませんでした', e)));
+}
+try{ navigator.storage && navigator.storage.persist && navigator.storage.persist(); }catch(e){}
+
+/* ------------------------- 起動 ------------------------- */
+initBank(); parseCharacters(); paintMute(); paintNet(); go('home');
+</script>
+</body>
+</html>
