@@ -379,7 +379,7 @@ function initBank(){
            rounds:[...new Set(Q.filter(q => q.src==='past' && q.rnd).map(q => q.rnd))].sort((a,b) => a-b) };
 }
 function qLabel(q){
-  if(q.src === 'ai') return 'AI予想問題';
+  if(q.src === 'ai') return `AI予想問題 ${q.id || ''}`.trim();   // 問題IDを表示（教員の確認・報告用）
   const m = /^(\d+)([AP])(\d+)/.exec(q.id || '');
   return m ? `第${m[1]}回 ${m[2]==='A'?'午前':'午後'} ${+m[3]}` : (q.id || '過去問');
 }
@@ -586,7 +586,7 @@ function renderSetup(){
       <div class="chips" id="rounds">${BANK.rounds.map(r => `<button class="chip ${SU.rounds.includes(r)?'on':''}" data-r="${r}">第${r}回</button>`).join('') || '<span class="mute">過去問がありません</span>'}</div>
     </div></div>
   <div class="card"><h2>🎯 問題の形式</h2>${seg('fmt',[['mc','5択'],['tf','〇×'],['mix','ミックス']])}
-    <p class="mute" style="margin:8px 0 0">〇×は、5択問題の選択肢を1つずつ「正しい？」の形で出題します（組合せ問題・図の問題は5択で出題）。</p></div>
+    <p class="mute" style="margin:8px 0 0">〇×は、5択問題の選択肢を1つずつ「正しい？」「正解に当たる？」の形で出題します（組合せ問題・図の問題は5択で出題）。</p></div>
   <div class="card"><div class="row" style="justify-content:space-between"><h2 style="margin:0">🗂 科目・単元</h2>
     <div class="row" style="gap:6px"><button class="chip" id="allSub">すべて</button><button class="chip" id="noSub">解除</button></div></div>
     <div style="margin-top:12px" id="doms">${Object.values(BANK.DOM).map(d => `
@@ -639,10 +639,17 @@ function renderSetup(){
 
 /* ------------------------- 出題セッション ------------------------- */
 let SES = null;
+/* 否定形（「〜ないのは」「誤っているのは」など）の問題は、
+   「正しい？」ではなく「正解に当たる？」と聞く。○＝正解の選択肢、×＝正解ではない */
 function tfKind(stem){
-  if(/(誤って|誤り|正しくない|適切でない|不適切|該当しない|含まれない|みられない|でないのはどれか|ないのはどれか)/.test(stem)) return 'neg';
+  if(/(誤って|誤り|正しくない|適切でない|不適切|該当しない|含まれない|みられない|ないのはどれか|ないもの)/.test(stem)) return 'neg';
   if(/(正しいのはどれか|適切なのはどれか)/.test(stem)) return 'pos';
   return 'ans';
+}
+function tfAsk(kind){
+  if(kind === 'neg') return 'この記述は、問いの正解に当たる？';
+  if(kind === 'pos') return 'この記述は正しい？';
+  return 'この選択肢は「正答」？';
 }
 function makeItem(q, fmt){
   let f = fmt === 'mix' ? (tfEligible(q) && Math.random() < .5 ? 'tf' : 'mc') : fmt;
@@ -650,7 +657,8 @@ function makeItem(q, fmt){
   if(f === 'mc') return { q, fmt:'mc' };
   const a = q.ans[0] - 1, others = q.choices.map((_, i) => i).filter(i => i !== a);
   const ci = Math.random() < .45 ? a : rnd(others), isAns = ci === a, kind = tfKind(q.stem || '');
-  return { q, fmt:'tf', ci, kind, truth: kind === 'neg' ? !isAns : isAns };
+  /* 聞き方を「正解に当たる？」に統一したので、○＝その選択肢が正答（isAns）で固定 */
+  return { q, fmt:'tf', ci, kind, truth: isAns };
 }
 function startSession(mode){
   const st = getSetup();
@@ -675,7 +683,7 @@ function renderQuiz(){
   if(it.fmt === 'tf'){
     body = `<div class="mute" style="font-weight:700">問：${br(q.stem)}</div>
       <div class="tfcard">「${br(q.choices[it.ci])}」</div>
-      <div class="tfask">${it.kind === 'ans' ? 'この選択肢は「正答」？' : 'この記述は正しい？'}</div>
+      <div class="tfask">${tfAsk(it.kind)}</div>
       <div class="tfbtns"><button class="tfbtn o" data-tf="1">〇</button><button class="tfbtn x" data-tf="0">×</button></div>`;
   }else{
     body = `<div class="stem">${br(q.stem)}${q.need===2?' <span class="badge rv">2つ選ぶ</span>':''}</div>${items}${imgs}
@@ -751,7 +759,10 @@ function renderFeedback(it, ok, conquered){
   let verdict = ok ? `⭕ 正解！${conquered ? '　弱点克服🎉' : ''}` : '❌ 不正解…';
   let sub = '';
   if(it.fmt === 'tf'){
-    sub = `正しくは <b>${it.truth ? '〇' : '×'}</b>。この問題の正答は ${ansTxt} 「${esc(q.choices[q.ans[0]-1])}」`;
+    const ansPart = `この問題の正答は ${ansTxt} 「${esc(q.choices[q.ans[0]-1])}」`;
+    sub = it.kind === 'pos'
+      ? `正しくは <b>${it.truth ? '〇' : '×'}</b>。${ansPart}`
+      : `この記述は正解に<b>${it.truth ? '当たります（〇）' : '当たりません（×）'}</b>。${ansPart}`;
   }else sub = `正答：<b>${ansTxt}</b>${q.ans.length > 1 && q.need === 1 ? '（複数正答）' : ''}`;
   const mainExp = it.fmt === 'tf' && q.cexp && q.cexp[it.ci] ? `<b>この選択肢：</b>${br(q.cexp[it.ci])}<br><br>${br(q.exp)}` : br(q.exp || '解説は準備中です。');
   const ce = q.cexp ? `<details class="more" ${it.fmt==='mc' && !ok ? 'open' : ''}><summary>選択肢ごとの解説</summary>
@@ -946,7 +957,7 @@ function renderSettings(){
 }
 
 /* ------------------------- スマホ対応（ホーム画面追加・オフライン） ------------------------- */
-const APP_VER = '3.0（2026-10-22）';
+const APP_VER = '3.2（2026-10-22）';
 function isStandalone(){ return (window.matchMedia && matchMedia('(display-mode: standalone)').matches) || navigator.standalone === true; }
 const IS_IOS = /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
 const IS_MOBILE = IS_IOS || /Android|Mobile/.test(navigator.userAgent);
